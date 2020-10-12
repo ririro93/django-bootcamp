@@ -1,6 +1,7 @@
-from django.http import HttpResponse, JsonResponse, Http404
+from django.http import HttpResponse, JsonResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render
 
+from .forms import ProductModelForm
 from .models import Product
 
 # Create your views here.
@@ -23,10 +24,41 @@ def search_view(request, *args, **kwargs):
     context = {"name": "junha", "query": "query"}
     return render(request, "home.html", context)
 
+## 1
+# def product_create_view(request, *args, **kwargs):
+#     if request.method == "POST":
+#         post_data = request.POST or None
+#         if post_data != None:
+#             my_form = ProductForm(request.POST)
+#             print("my_form: ", my_form)
+#             print(my_form.is_valid())
+#             if my_form.is_valid():
+#                 print(my_form.cleaned_data.get("title"))
+#                 title_form_input = my_form.cleaned_data.get("title")
+#                 Product.objects.create(title=title_form_input)
+#                 print("post_data: ", post_data)
+#     return render(request, "forms.html", {})
+
+## 2
+# def product_create_view(request, *args, **kwargs):
+#     form = ProductForm(request.POST or None) # POST 면 선언하고 GET이면 None 넣고
+#     if form.is_valid():
+#         print(form.cleaned_data)
+#         data = form.cleaned_data
+#         Product.objects.create(**data)
+#         form = ProductForm()
+#         # return HttpResponseRedirect('/successs')
+#     return render(request, "forms.html", {"form": form})
+
 def product_create_view(request, *args, **kwargs):
-    print(request.POST)
-    print(request.GET)
-    return render(request, "forms.html", {})
+    form = ProductModelForm(request.POST or None) # POST 면 선언하고 GET이면 None 넣고
+    if form.is_valid():
+        obj = form.save(commit=False)
+        # do something
+        # obj.user = request.user
+        obj.save()
+        form = ProductModelForm()
+    return render(request, "forms.html", {"form": form})
 
 def product_detail_view(request, pk):
     try:
