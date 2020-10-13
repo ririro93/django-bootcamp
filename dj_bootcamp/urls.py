@@ -25,8 +25,17 @@ from products.views import (
     # bad_view,
 )
 
+from accounts.views import (
+    register_view,
+    login_view,
+    logout_view,
+)
+
 urlpatterns = [
     # path('bad-view/', bad_view),
+    path('login/', login_view),
+    path('logout/', logout_view),
+    path('register/', register_view),
     path('search/', search_view),
     path('products/', product_list_view),
     path('products/create/', product_create_view),
